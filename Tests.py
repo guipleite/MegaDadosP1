@@ -40,13 +40,6 @@ class TestProjeto(unittest.TestCase):
         # Adiciona um usuario.
         adiciona_usuarios(conn)
 
-        # Tenta adicionar o mesmo usuario duas vezes.
-        try:
-            adiciona_usuarios(conn)
-            self.fail('Nao deveria ter adicionado o mesmo usuario duas vezes.')
-        except ValueError as e:
-            pass
-
         # Checa se o usuario existe.
         id = acha_usuario(conn)
         self.assertIsNotNone(id)
@@ -54,7 +47,6 @@ class TestProjeto(unittest.TestCase):
     def test_adiciona_post(self):
         conn = self.__class__.connection
 
-        # Adiciona comida não existente.
         adiciona_post(conn)
 
         # Checa se a o post existe.
