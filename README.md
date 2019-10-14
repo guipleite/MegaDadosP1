@@ -7,4 +7,4 @@ Hugo Carl
 
 
 
-Para rodar os testes execture o arquivo Test.py
+Para rodar os testes execute o arquivo Test.py
