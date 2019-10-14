@@ -10,7 +10,15 @@
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
-
+# para drop
+#SET FOREIGN_KEY_CHECKS=0; DROP TABLE Post; SET FOREIGN_KEY_CHECKS=1;
+#SET FOREIGN_KEY_CHECKS=0; DROP TABLE Usuarios; SET FOREIGN_KEY_CHECKS=1;
+#SET FOREIGN_KEY_CHECKS=0; DROP TABLE Passaros; SET FOREIGN_KEY_CHECKS=1;
+#drop table if exists Usuarios_Passaros;
+#drop table if exists Tag;
+#drop table if exists Mencionar;
+#drop table if exists Visualizado;
+#drop database if exists mydb;
 
 CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 USE `mydb` ;
@@ -64,7 +72,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `mydb`.`Usuarios_Passaros`
 -- -----------------------------------------------------
-
+drop table if exists Usuarios_Passaros;
 CREATE TABLE IF NOT EXISTS `mydb`.`Usuarios_Passaros` (
   `Usuarios_idUsuarios` INT NOT NULL,
   `Passaros_idPassaros` INT NOT NULL,

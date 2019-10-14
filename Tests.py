@@ -66,7 +66,7 @@ class TestProjeto(unittest.TestCase):
                 cursor.execute('''SELECT Ativar FROM Mencionar WHERE Usuarios_idUsuarios=1''')
                 self.assertEqual(cursor.fetchone()[0],0)
 
-                cursor.execute('''SELECT Ativo FROM Posts WHERE Usuarios_idUsuarios=1''')
+                cursor.execute('''SELECT Atividade FROM Post WHERE Usuarios_idUsuarios=1''')
                 self.assertEqual(cursor.fetchone()[0],0)
 
             except pymysql.err.IntegrityError as e:
