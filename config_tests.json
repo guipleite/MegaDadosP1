@@ -1,0 +1,5 @@
+{
+    "USER": "root",
+    "PASS": "password",
+    "LOGFILE": "log.txt"
+}

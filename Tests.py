@@ -7,7 +7,6 @@ import re
 import subprocess
 import unittest
 import pymysql
-
 from proj import *
 
 class TestProjeto(unittest.TestCase):
@@ -15,7 +14,7 @@ class TestProjeto(unittest.TestCase):
     def setUpClass(cls):
         global config
         cls.connection = pymysql.connect(
-            host=config['HOST'],
+            #host=config['HOST'],
             user=config['USER'],
             password=config['PASS'],
             database='mydb'
@@ -63,12 +62,23 @@ class TestProjeto(unittest.TestCase):
         self.assertIsNotNone(id)
 
     def test_remove_post(self):
-        adiciona_post(conn)
+        conn = self.__class__.connection
 
         remove_post(conn)
 
-        res = lista_comidas(conn)
-        self.assertFalse(res)
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute('''SELECT Ativar FROM Tag WHERE Passaros_idPassaros=1''')
+                self.assertEqual(cursor.fetchone()[0],0)
+
+                cursor.execute('''SELECT Ativar FROM Mencionar WHERE Usuarios_idUsuarios=1''')
+                self.assertEqual(cursor.fetchone()[0],0)
+
+                cursor.execute('''SELECT Ativo FROM Posts WHERE Usuarios_idUsuarios=1''')
+                self.assertEqual(cursor.fetchone()[0],0)
+
+            except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel :(')
 
     def test_menciona_passaro(self):
         conn = self.__class__.connection
