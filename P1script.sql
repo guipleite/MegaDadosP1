@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Post` (
   `URL` VARCHAR(45) NULL,
   `Atividade` TINYINT NULL,
   `Usuarios_idUsuarios` INT NOT NULL,
+  `Curtidas` INT NOT NULL default 0,
   PRIMARY KEY (`idPost`),
   INDEX `fk_Post_Usuarios1_idx` (`Usuarios_idUsuarios` ASC) VISIBLE,
   CONSTRAINT `fk_Post_Usuarios1`
@@ -72,7 +73,6 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `mydb`.`Usuarios_Passaros`
 -- -----------------------------------------------------
-drop table if exists Usuarios_Passaros;
 CREATE TABLE IF NOT EXISTS `mydb`.`Usuarios_Passaros` (
   `Usuarios_idUsuarios` INT NOT NULL,
   `Passaros_idPassaros` INT NOT NULL,
@@ -87,6 +87,25 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Usuarios_Passaros` (
   CONSTRAINT `fk_Usuarios_Passaros_Passaros1`
     FOREIGN KEY (`Passaros_idPassaros`)
     REFERENCES `mydb`.`Passaros` (`idPassaros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `mydb`.`Joinha` (
+  `Usuarios_idUsuarios` INT NOT NULL,
+  `Post_idPost` INT NOT NULL,
+  `Joi` INT NOT NULL,
+  INDEX `fk_Joinha_Usuarios_idx` (`Usuarios_idUsuarios` ASC) VISIBLE,
+  INDEX `fk_Joinha_Post_idx` (`Post_idPost` ASC) VISIBLE,
+  PRIMARY KEY (`Usuarios_idUsuarios`, `Post_idPost`),
+  CONSTRAINT `fk_Joinha_Usuarios_idx`
+    FOREIGN KEY (`Usuarios_idUsuarios`)
+    REFERENCES `mydb`.`Usuarios` (`idUsuarios`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Joinha_Post_idx`
+    FOREIGN KEY (`Post_idPost`)
+    REFERENCES `mydb`.`Post` (`idPost`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -164,6 +183,8 @@ CREATE TABLE IF NOT EXISTS `mydb`.`Mencionar` (
 ENGINE = InnoDB;
 
 DROP TRIGGER IF EXISTS ativar;
+DROP TRIGGER IF EXISTS joia;
+
 DELIMITER // 
 CREATE TRIGGER ativar
 BEFORE UPDATE ON Post
@@ -174,5 +195,15 @@ BEGIN
 
 	UPDATE Mencionar, Post
         SET Mencionar.Ativar = Post.Atividade where Mencionar.Post_idPost = Post.idPost;
+END//
+DELIMITER ;
+
+DELIMITER // 
+CREATE TRIGGER joia
+BEFORE INSERT ON Joinha
+FOR EACH ROW
+BEGIN
+    UPDATE Post, Joinha
+		SET Post.Curtidas = Post.Curtidas + SUM(Joinha.Joi) WHERE Post.idPost = Joinha.Post_idPost;
 END//
 DELIMITER ;
