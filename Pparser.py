@@ -28,3 +28,5 @@ def post_parser(txt):
 
 	return tags,shouts
 			#print("shout:",i[1:n+1])
+
+			

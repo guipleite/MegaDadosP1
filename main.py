@@ -68,16 +68,16 @@ def adiciona_post(title,text,url,usr_id,status=1):#Pegar o id dos nomes dos pass
             cursor.execute('''INSERT INTO Post (Titulo, Texto, URL,Atividade,Usuarios_idUsuarios) VALUES (%s,%s,%s,%s,%s);''',(title,text,url,status,usr_id))
             cursor.execute('''COMMIT''')
 
-            post_id=1
+            post_id=2   ####
             tagged_id =3 ###
             shouted_id = 3 #######
 
             for shout in shouts:
-                cursor.execute('''INSERT INTO Mencionar (Usuarios_idUsuarios, Post_idPost, Ativar) VALUES (%s,%s,%s);''',(shouted_id,post_id,status))
+                cursor.execute('''INSERT INTO Mencionar (Usuarios_idUsuarios, Post_idPost, Ativar) VALUES (%s,%s,%s);''',(shout,post_id,status))
                 cursor.execute('''COMMIT''')
 
             for tag in tags:
-                cursor.execute('''INSERT INTO Tag (Post_idPost, Passaros_idPassaros, Ativar) VALUES (%s,%s,%s);''',(post_id,tagged_id,status))
+                cursor.execute('''INSERT INTO Tag (Post_idPost, Passaros_idPassaros, Ativar) VALUES (%s,%s,%s);''',(post_id,tag,status))
                 cursor.execute('''COMMIT''')
 
 
@@ -98,7 +98,6 @@ def adiciona_view(post_id,usr_id,browser,ip,device,date):
             raise ValueError(f'Não foi possivel inserir ')
     conn.close()
 
-
 @app.put("/add/pref")
 def adiciona_pref(usr_id,bird_id):
     conn = setUp()
@@ -111,26 +110,44 @@ def adiciona_pref(usr_id,bird_id):
 
     conn.close()
 
-
-@app.post("/remove/post")##########################
-def remove_post(conn):
+@app.delete("/remove/post")#Funciona mas o trigger  nao
+def remove_post(post_id):
 
     conn = setUp()
 
     with conn.cursor() as cursor:
         try:
-            cursor.execute('''UPDATE Post SET Atividade=0 WHERE Usuarios_idUsuarios=1''')
+            cursor.execute('''UPDATE Post SET Atividade=0 WHERE idPost=%s;''',(post_id))
+            cursor.execute('''COMMIT''')
 
         except pymysql.err.IntegrityError as e:
             raise ValueError(f'Não foi possivel remover da tabela Post')
     conn.close()
 
+@app.put("/post/updownvote")
+def updownvote(usr_id,post_id,vote):
+    
+    conn = setUp()
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute('''UPDATE Joinha SET Joi=% WHERE Post_idPost=%s AND Usuarios_idUsuarios=%s;''',(vote,usr_id,post_id))
+            cursor.execute('''COMMIT''')
 
+        except pymysql.err.IntegrityError as e:
+            raise ValueError(f'Não foi possivel')
+    conn.close()
 
-# def upvote_post():
+@app.delete("/remove/updownvote")
+def remove_updownvote(usr_id,post_id):
+    conn = setUp()
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute('''DELETE Joinha WHERE Post_idPost=%s AND Usuarios_idUsuario=%s;''',(usr_id,post_id))
+            cursor.execute('''COMMIT''')
 
-# def downvote_post():
-
+        except pymysql.err.IntegrityError as e:
+            raise ValueError(f'Não foi possivel remover da tabela')
+    conn.close()
 
 # def usuario_posts():
 
