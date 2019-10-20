@@ -114,10 +114,8 @@ def run_sql_script(filename):
         )
 
 def setUpModule():
-    filenames = [entry for entry in os.listdir()
-        if os.path.isfile(entry) and re.match(r'.*_\d{3}\.sql', entry)]
-    for filename in filenames:
-        run_sql_script(filename)
+    run_sql_script('P1script.sql')
+
 
 def tearDownModule():
     run_sql_script('tear_down.sql')

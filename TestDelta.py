@@ -34,71 +34,76 @@ class TestProjeto(unittest.TestCase):
         with conn.cursor() as cursor:
             cursor.execute('ROLLBACK')
 
-    def test_adiciona_usuarios(self):
+    def test_request_add_user(self):
         conn = self.__class__.connection
 
-        # Adiciona um usuario.
-        adiciona_usuarios(conn)
-
-        # Checa se o usuario existe.
-        id = acha_usuario(conn)
-        self.assertIsNotNone(id)
-
-    def test_adiciona_post(self):
-        conn = self.__class__.connection
-
-        adiciona_post(conn)
-
-        # Checa se a o post existe.
-        id = acha_post(conn)
-        self.assertIsNotNone(id)
-
-    def test_remove_post(self):
-        conn = self.__class__.connection
-
-        remove_post(conn)
-
+        request_add_user(conn)
+        
         with conn.cursor() as cursor:
             try:
-                cursor.execute('''SELECT Ativar FROM Tag WHERE Passaros_idPassaros=1''')
-                self.assertEqual(cursor.fetchone()[0],0)
-
-                cursor.execute('''SELECT Ativar FROM Mencionar WHERE Usuarios_idUsuarios=1''')
-                self.assertEqual(cursor.fetchone()[0],0)
-
-                cursor.execute('''SELECT Atividade FROM Post WHERE Usuarios_idUsuarios=1''')
-                self.assertEqual(cursor.fetchone()[0],0)
+                cursor.execute('''SELECT Nome , Email , Cidade from Usuarios WHERE Nome="test_add_usr" ''')
+                self.assertEqual(cursor.fetchone(),(("test_add_usr", "email@email.com","Sao Paulo, SP")))
+                cursor.execute('''COMMIT''') 
 
             except pymysql.err.IntegrityError as e:
-                raise ValueError(f'Não foi possivel :(')
+                raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' )   
 
-    def test_menciona_passaro(self):
+    def test_request_add_passaro(self):
         conn = self.__class__.connection
 
-        menciona_passaro(conn)
-        id = acha_menciona_passaro(conn)
-        self.assertIsNotNone(id)
+        request_add_passaro(conn)
+        
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute('''SELECT Nome , Especie from Passaros WHERE Nome="test_add_passaro" ''')
+                self.assertEqual(cursor.fetchone(),(("test_add_passaro", "testus_addus_passarus")))
+                cursor.execute('''COMMIT''') 
 
-    def test_menciona_usuario(self):
+            except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' ) 
+
+    def test_request_aa_add_post(self): #######menciona e tag
         conn = self.__class__.connection
 
-        menciona_usuario(conn)
-        id = acha_menciona_usuario(conn)
-        self.assertIsNotNone(id)
+        request_add_post(conn)
+        
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute('''SELECT Titulo, Texto, URL,Atividade,Usuarios_idUsuarios from Post WHERE Titulo="test_add_post" ''')
+                self.assertEqual(cursor.fetchone(),(("test_add_post", "test_add_post @test_add_post_u1 #test_add_post_b1","test_add_post_url",1,1)))
+                cursor.execute('''COMMIT''') 
 
-    def test_adiciona_view(self):
+            except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' )
+
+    def test_request_aa_delete_post(self): ################
         conn = self.__class__.connection
 
-        adiciona_view(conn)
-        id = acha_view(conn)
-        self.assertIsNotNone(id)
+        request_delete_post(conn)
+        
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute('''SELECT Titulo, Texto, URL,Atividade,Usuarios_idUsuarios from Post WHERE Titulo="test_add_post" ''')
+                self.assertEqual(cursor.fetchone(),(("test_add_post", "test_add_post @test_add_post_u1 #test_add_post_b1","test_add_post_url",0,1)))
+                cursor.execute('''COMMIT''') 
+                cursor.execute('''SELECT Ativar FROM Tag WHERE Post_idPost=1''')
+                self.assertEqual(cursor.fetchone()[0],0)
+                cursor.execute('''COMMIT''') 
+                cursor.execute('''SELECT Ativar FROM Mencionar WHERE Post_idPost=1''')
+                self.assertEqual(cursor.fetchone()[0],0)
+                cursor.execute('''COMMIT''') 
 
-    def test_adiciona_pref(self):
-        conn = self.__class__.connection
-
-        adiciona_pref(conn)
-        id = acha_pref(conn)
-        self.assertIsNotNone(id)
+            except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' ) 
+    def test_request_pref(self):
+        pass
+    def test_request_views(self):
+        pass
+    def test_request_upvote(self):
+        pass
+    def test_request_z_remove_upvote(self):
+        pass
+    
 
 def run_sql_script(filename):
     global config
@@ -114,10 +119,8 @@ def run_sql_script(filename):
         )
 
 def setUpModule():
-    filenames = [entry for entry in os.listdir()
-        if os.path.isfile(entry) and re.match(r'.*_\d{3}\.sql', entry)]
-    for filename in filenames:
-        run_sql_script(filename)
+    run_sql_script('P1script.sql')
+    run_sql_script('P1script_Delta.sql')
 
 def tearDownModule():
     run_sql_script('tear_down.sql')

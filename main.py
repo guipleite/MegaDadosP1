@@ -57,7 +57,7 @@ def adiciona_passaro(name,species):
 	conn.close()
 
 @app.put("/add/post")
-def adiciona_post(title,text,url,usr_id,status=1):#Pegar o id dos nomes dos passaros e usrs
+def adiciona_post(title,text,url,usr_id,status=1):
 
     conn = setUp()
 
@@ -68,18 +68,19 @@ def adiciona_post(title,text,url,usr_id,status=1):#Pegar o id dos nomes dos pass
             cursor.execute('''INSERT INTO Post (Titulo, Texto, URL,Atividade,Usuarios_idUsuarios) VALUES (%s,%s,%s,%s,%s);''',(title,text,url,status,usr_id))
             cursor.execute('''COMMIT''')
 
-            post_id=2   ####
-            tagged_id =3 ###
-            shouted_id = 3 #######
-
+            cursor.execute('''SELECT LAST_INSERT_ID()''')
+            post_id = cursor.fetchone()[0]
             for shout in shouts:
-                cursor.execute('''INSERT INTO Mencionar (Usuarios_idUsuarios, Post_idPost, Ativar) VALUES (%s,%s,%s);''',(shout,post_id,status))
+                cursor.execute('''SELECT idUsuarios FROM Usuarios WHERE Nome = %s''',(shout))
+                shouted_id = cursor.fetchone()[0]
+                cursor.execute('''INSERT INTO Mencionar (Usuarios_idUsuarios, Post_idPost, Ativar) VALUES (%s,%s,%s);''',(shouted_id,post_id,status))
                 cursor.execute('''COMMIT''')
 
             for tag in tags:
-                cursor.execute('''INSERT INTO Tag (Post_idPost, Passaros_idPassaros, Ativar) VALUES (%s,%s,%s);''',(post_id,tag,status))
+                cursor.execute('''SELECT idPassaros FROM Passaros WHERE Nome = %s''',(tag))
+                tagged_id = cursor.fetchone()[0]
+                cursor.execute('''INSERT INTO Tag (Post_idPost, Passaros_idPassaros, Ativar) VALUES (%s,%s,%s);''',(post_id,tagged_id,status))
                 cursor.execute('''COMMIT''')
-
 
 
         except pymysql.err.IntegrityError as e:
@@ -125,7 +126,7 @@ def remove_post(post_id):
     conn.close()
 
 @app.put("/post/updownvote")
-def updownvote(usr_id,post_id,vote):
+def updownvote(usr_id,post_id,vote):  ################
     
     conn = setUp()
     with conn.cursor() as cursor:
@@ -138,11 +139,11 @@ def updownvote(usr_id,post_id,vote):
     conn.close()
 
 @app.delete("/remove/updownvote")
-def remove_updownvote(usr_id,post_id):
+def remove_updownvote(usr_id,post_id):  #############
     conn = setUp()
     with conn.cursor() as cursor:
         try:
-            cursor.execute('''DELETE Joinha WHERE Post_idPost=%s AND Usuarios_idUsuario=%s;''',(usr_id,post_id))
+            cursor.execute('''DELETE FROM Joinha WHERE Post_idPost=%s AND Usuarios_idUsuario=%s;''',(usr_id,post_id))
             cursor.execute('''COMMIT''')
 
         except pymysql.err.IntegrityError as e:
