@@ -1,7 +1,6 @@
-import pymysql
-
-def post_parser(txt,post_id,conn):
-	
+def post_parser(txt):
+	tags = []
+	shouts = []
 	txts = txt.split(' ')
 
 	for i in txts:
@@ -13,14 +12,9 @@ def post_parser(txt,post_id,conn):
 				n+=1
 
 			#adicionar tag
-			print("tag:",i[1:n+1])
-			with conn.cursor() as cursor:
-				try:
-					cursor.execute('''SELECT idPassaros FROM passaros WHERE nome = ''')
-					cursor.execute('''INSERT INTO Tag (Post_idPost, Passaros_idPassaros, Ativar) VALUES (1, 1,1)''')
-					cursor.execute('''COMMIT''')
-				except pymysql.err.IntegrityError as e:
-					raise ValueError(f'Não foi possivel ')
+			#print("tag:",i[1:n+1])
+
+			tags.append(i[1:n+1])
 
 		elif i[0] == "@":
 			n=0
@@ -30,4 +24,7 @@ def post_parser(txt,post_id,conn):
 				n+=1
 
 			#adicionar shout
-			print("shout:",i[1:n+1])
+			shouts.append(i[1:n+1])
+
+	return tags,shouts
+			#print("shout:",i[1:n+1])
