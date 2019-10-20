@@ -1,8 +1,5 @@
 import pymysql
 
-
-txt = "SSSSSSSSSSSSSSSSAsdadada asd #123, asdawfe . @hugo #gostoso @monts!"
-
 def post_parser(txt,post_id,conn):
 	
 	txts = txt.split(' ')
