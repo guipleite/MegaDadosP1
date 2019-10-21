@@ -132,20 +132,25 @@ def request_add_user(conn):
         except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel')
 
-def request_add_passaro(conn):
     with conn.cursor() as cursor:
         try:
             req = requests.put("http://127.0.0.1:8000/add/bird?name=test_add_passaro&species=testus_addus_passarus")
         except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel')
 
+def request_add_passaro(conn):
+    with conn.cursor() as cursor:
+        try:
+            req = requests.put("http://127.0.0.1:8000/add/bird?name=test_add_passaro&species=testus_addus_passarus")
+        except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel')   
 def request_add_post(conn):
     with conn.cursor() as cursor:
         try:
             req = requests.put("http://127.0.0.1:8000/add/usr?name=test_add_post_u1&email=email%40email.com&location=Sao%20Paulo%2C%20SP")
             req = requests.put("http://127.0.0.1:8000/add/usr?name=test_add_post_u2&email=email%40email.com&location=Sao%20Paulo%2C%20SP")
             req = requests.put("http://127.0.0.1:8000/add/bird?name=test_add_post_b1&species=testus_addus_passarus")
-            req = requests.put("http://127.0.0.1:8000/add/post?title=test_add_post&text=test_add_post%20%40test_add_post_u1%20%23test_add_post_b1&url=test_add_post_url&usr_id=2&status=1")
+            req = requests.put("http://127.0.0.1:8000/add/post?title=test_add_post&text=est_add_post%20%40test_add_post_u1%2C%20%20%23test_add_post_b1%21&url=test_add_post_url&usr_id=2&status=1")
         except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel')
 
@@ -171,6 +176,21 @@ def request_add_view(conn):
     with conn.cursor() as cursor:
         try:
             req = requests.put("http://127.0.0.1:8000/add/view?post_id=1&usr_id=1&browser=google%20explorer&ip=1270018000&device=nokia%20bolado&date=2014-11-19%2013%3A29%3A00.000%20")
+
+        except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel')
+def request_add_vote(conn):
+     with conn.cursor() as cursor:
+        try:
+            req = requests.put("http://127.0.0.1:8000/post/updownvote?usr_id=1&post_id=1&vote=1")
+
+        except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel')
+
+def request_update_vote(conn):
+     with conn.cursor() as cursor:
+        try:
+            req = requests.put("http://127.0.0.1:8000/post/updatevote?usr_id=1&post_id=1&vote=1")
 
         except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel')

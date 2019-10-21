@@ -11,6 +11,7 @@
 -- Schema mydb
 -- -----------------------------------------------------
 # para drop
+#USE `mydb` ;
 #SET FOREIGN_KEY_CHECKS=0; DROP TABLE Post; SET FOREIGN_KEY_CHECKS=1;
 #SET FOREIGN_KEY_CHECKS=0; DROP TABLE Usuarios; SET FOREIGN_KEY_CHECKS=1;
 #SET FOREIGN_KEY_CHECKS=0; DROP TABLE Passaros; SET FOREIGN_KEY_CHECKS=1;
@@ -184,10 +185,12 @@ ENGINE = InnoDB;
 
 DROP TRIGGER IF EXISTS ativar;
 DROP TRIGGER IF EXISTS joia;
+drop view if exists curtida;
+CREATE VIEW Curtida AS SELECT Joinha.Post_idPost as idcurt, SUM(Joinha.Joi) AS somacurtida FROM Joinha group by Joinha.Post_idPost;
 
 DELIMITER // 
 CREATE TRIGGER ativar
-BEFORE UPDATE ON Post
+AFTER UPDATE ON Post
 FOR EACH ROW
 BEGIN
     UPDATE Tag, Post
@@ -200,10 +203,10 @@ DELIMITER ;
 
 DELIMITER // 
 CREATE TRIGGER joia
-BEFORE INSERT ON Joinha
+AFTER INSERT ON Joinha
 FOR EACH ROW
 BEGIN
-    UPDATE Post, Joinha
-		SET Post.Curtidas = Post.Curtidas + SUM(Joinha.Joi) WHERE Post.idPost = Joinha.Post_idPost;
+    UPDATE Curtida, Post
+		SET Post.Curtidas = Curtida.somacurtida where Post.idPost = Curtida.idcurt;
 END//
 DELIMITER ;

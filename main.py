@@ -127,28 +127,27 @@ def remove_post(post_id):
     conn.close()
 
 @app.put("/post/updownvote")
-def updownvote(usr_id,post_id,vote):  ################
-    
+def updownvote(usr_id,post_id,vote): 
     conn = setUp()
     with conn.cursor() as cursor:
         try:
-            cursor.execute('''UPDATE Joinha SET Joi=% WHERE Post_idPost=%s AND Usuarios_idUsuarios=%s;''',(vote,usr_id,post_id))
+            cursor.execute('''INSERT INTO Joinha (Usuarios_idUsuarios, Post_idPost, Joi) VALUES (%s, %s, %s);''',(usr_id,post_id,vote))
             cursor.execute('''COMMIT''')
 
         except pymysql.err.IntegrityError as e:
             raise ValueError(f'Não foi possivel')
     conn.close()
 
-@app.delete("/remove/updownvote")
-def remove_updownvote(usr_id,post_id):  #############
+@app.put("/post/updatevote")
+def updatevote(usr_id,post_id,vote): 
     conn = setUp()
     with conn.cursor() as cursor:
         try:
-            cursor.execute('''DELETE FROM Joinha WHERE Post_idPost=%s AND Usuarios_idUsuario=%s;''',(usr_id,post_id))
+            cursor.execute('''UPDATE Joinha SET Joi = %s  WHERE Usuarios_idUsuarios = %s AND Post_idPost=%s ''',(vote,usr_id,post_id))
             cursor.execute('''COMMIT''')
 
         except pymysql.err.IntegrityError as e:
-            raise ValueError(f'Não foi possivel remover da tabela')
+            raise ValueError(f'Não foi possivel')
     conn.close()
 
 @app.get("/list/usr_posts")
