@@ -111,13 +111,14 @@ def adiciona_pref(usr_id,bird_id):
 
     conn.close()
 
-@app.delete("/remove/post")#Funciona mas o trigger  nao
+@app.delete("/remove/post")
 def remove_post(post_id):
 
     conn = setUp()
 
     with conn.cursor() as cursor:
         try:
+            cursor.execute('''UPDATE Post SET Atividade=0 WHERE idPost=%s;''',(post_id))
             cursor.execute('''UPDATE Post SET Atividade=0 WHERE idPost=%s;''',(post_id))
             cursor.execute('''COMMIT''')
 
@@ -150,12 +151,65 @@ def remove_updownvote(usr_id,post_id):  #############
             raise ValueError(f'Não foi possivel remover da tabela')
     conn.close()
 
-# def usuario_posts():
+@app.get("/list/usr_posts")
+def usuario_posts(usr_id):
+    conn = setUp()
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute('''SELECT * FROM Post INNER JOIN Usuarios ON Post.Usuarios_idUsuarios = Usuarios.idUsuarios WHERE idUsuarios = %s ORDER BY idPost DESC;''',(usr_id))
+            cursor.execute('''COMMIT''')
 
-# def usuario_popular():
+        except pymysql.err.IntegrityError as e:
+            raise ValueError(f'Não foi possivel')
+    conn.close()
 
-# def usuario_ref():
+@app.get("/list/usr_pop")
+def usuario_popular():
+    conn = setUp()
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute('''DROP VIEW IF EXISTS RankingPoPu;''')
+            cursor.execute('''CREATE VIEW RankingPoPu AS SELECT Cidade, idUsuarios, Nome FROM Usuarios 
+            				  INNER JOIN Mencionar ON Usuarios.idUsuarios = Mencionar.Usuarios_idUsuarios 
+    						  GROUP BY Usuarios_idUsuarios ORDER BY COUNT(Post_idPost) DESC;''')
+            cursor.execute('''SELECT * FROM RankingPoPu GROUP BY Cidade;''')
+            cursor.execute('''COMMIT''')
 
-# def views_tipo():
+        except pymysql.err.IntegrityError as e:
+            raise ValueError(f'Não foi possivel')
+    conn.close()
 
-# def passaros_img():
+@app.get("/list/usr_ref")
+def usuario_ref(usr_id):
+    conn = setUp()
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute('''SELECT Nome FROM Usuarios WHERE idUsuarios in 
+				 (SELECT Post.Usuarios_idUsuarios FROM Mencionar INNER JOIN Usuarios ON Usuarios.idUsuarios = Mencionar.Usuarios_idUsuarios 
+		          INNER JOIN Post ON Mencionar.Post_idPost = Post.idPost WHERE idUsuarios = %s GROUP BY Post.Usuarios_idUsuarios);''',(usr_id))
+        except pymysql.err.IntegrityError as e:
+            raise ValueError(f'Não foi possivel')
+
+@app.get("/list/views_type")
+def views_tipo():
+    conn = setUp()
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute('''SELECT Browser, Aparelho, COUNT(IP) FROM Visualizado GROUP BY Browser, Aparelho;''')
+            cursor.execute('''COMMIT''')
+
+        except pymysql.err.IntegrityError as e:
+            raise ValueError(f'Não foi possivel')
+    conn.close()
+
+@app.get("/list/bird_img")
+def passaros_img():
+    conn = setUp()
+    with conn.cursor() as cursor:
+        try:
+            cursor.execute('''SELECT URL, Passaros_idPassaros FROM Post INNER JOIN Tag ON Post.idPost = Tag.Post_idPost GROUP BY Passaros_idPassaros, URL;''')
+            cursor.execute('''COMMIT''')
+
+        except pymysql.err.IntegrityError as e:
+            raise ValueError(f'Não foi possivel')
+    conn.close()

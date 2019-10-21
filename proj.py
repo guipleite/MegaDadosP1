@@ -143,8 +143,9 @@ def request_add_post(conn):
     with conn.cursor() as cursor:
         try:
             req = requests.put("http://127.0.0.1:8000/add/usr?name=test_add_post_u1&email=email%40email.com&location=Sao%20Paulo%2C%20SP")
+            req = requests.put("http://127.0.0.1:8000/add/usr?name=test_add_post_u2&email=email%40email.com&location=Sao%20Paulo%2C%20SP")
             req = requests.put("http://127.0.0.1:8000/add/bird?name=test_add_post_b1&species=testus_addus_passarus")
-            req = requests.put("http://127.0.0.1:8000/add/post?title=test_add_post&text=test_add_post%20%40test_add_post_u1%20%23test_add_post_b1&url=test_add_post_url&usr_id=1&status=1")
+            req = requests.put("http://127.0.0.1:8000/add/post?title=test_add_post&text=test_add_post%20%40test_add_post_u1%20%23test_add_post_b1&url=test_add_post_url&usr_id=2&status=1")
         except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel')
 
@@ -152,6 +153,7 @@ def request_delete_post(conn):
     with conn.cursor() as cursor:
         try:
             req = requests.put("http://127.0.0.1:8000/remove/post?post_id=1")
+
         except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel')
 

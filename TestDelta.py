@@ -62,7 +62,7 @@ class TestProjeto(unittest.TestCase):
             except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' ) 
 
-    def test_request_aa_add_post(self): #######menciona e tag
+    def test_request_aa_add_post(self):
         conn = self.__class__.connection
 
         request_add_post(conn)
@@ -70,9 +70,12 @@ class TestProjeto(unittest.TestCase):
         with conn.cursor() as cursor:
             try:
                 cursor.execute('''SELECT Titulo, Texto, URL,Atividade,Usuarios_idUsuarios from Post WHERE Titulo="test_add_post" ''')
-                self.assertEqual(cursor.fetchone(),(("test_add_post", "test_add_post @test_add_post_u1 #test_add_post_b1","test_add_post_url",1,1)))
-                cursor.execute('''COMMIT''') 
-
+                self.assertEqual(cursor.fetchone(),(("test_add_post", "test_add_post @test_add_post_u1 #test_add_post_b1","test_add_post_url",1,2)))
+                cursor.execute('''COMMIT''')
+                cursor.execute('''SELECT Ativar FROM Tag WHERE Post_idPost=1''')
+                self.assertEqual(cursor.fetchone()[0],1)
+                cursor.execute('''SELECT Ativar FROM Tag WHERE Post_idPost=1''')
+                self.assertEqual(cursor.fetchone()[0],1)
             except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' )
 
@@ -84,7 +87,7 @@ class TestProjeto(unittest.TestCase):
         with conn.cursor() as cursor:
             try:
                 cursor.execute('''SELECT Titulo, Texto, URL,Atividade,Usuarios_idUsuarios from Post WHERE Titulo="test_add_post" ''')
-                self.assertEqual(cursor.fetchone(),(("test_add_post", "test_add_post @test_add_post_u1 #test_add_post_b1","test_add_post_url",0,1)))
+                self.assertEqual(cursor.fetchone(),(("test_add_post", "test_add_post @test_add_post_u1 #test_add_post_b1","test_add_post_url",0,2)))
                 cursor.execute('''COMMIT''') 
                 cursor.execute('''SELECT Ativar FROM Tag WHERE Post_idPost=1''')
                 self.assertEqual(cursor.fetchone()[0],0)
@@ -95,15 +98,19 @@ class TestProjeto(unittest.TestCase):
 
             except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' ) 
+
     def test_request_pref(self):
         pass
+
     def test_request_views(self):
         pass
+
     def test_request_upvote(self):
         pass
+        
     def test_request_z_remove_upvote(self):
         pass
-    
+
 
 def run_sql_script(filename):
     global config
