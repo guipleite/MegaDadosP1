@@ -8,6 +8,7 @@ import subprocess
 import unittest
 import pymysql
 from proj import *
+import datetime
 
 class TestProjeto(unittest.TestCase):
     @classmethod
@@ -60,7 +61,7 @@ class TestProjeto(unittest.TestCase):
                 cursor.execute('''COMMIT''') 
 
             except pymysql.err.IntegrityError as e:
-                raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' ) 
+                raise ValueError(f'Não foi possivel adicionar na tabela Passaros' ) 
 
     def test_request_aa_add_post(self):
         conn = self.__class__.connection
@@ -77,7 +78,7 @@ class TestProjeto(unittest.TestCase):
                 cursor.execute('''SELECT Ativar FROM Tag WHERE Post_idPost=1''')
                 self.assertEqual(cursor.fetchone()[0],1)
             except pymysql.err.IntegrityError as e:
-                raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' )
+                raise ValueError(f'Não foi possivel adicionar na tabela Post' )
 
     def test_request_aa_delete_post(self): ################
         conn = self.__class__.connection
@@ -97,17 +98,39 @@ class TestProjeto(unittest.TestCase):
                 cursor.execute('''COMMIT''') 
 
             except pymysql.err.IntegrityError as e:
-                raise ValueError(f'Não foi possivel adicionar na tabela Usuarios' ) 
+                raise ValueError(f'Não foi possivel deltar o post' ) 
 
     def test_request_pref(self):
-        pass
+        conn = self.__class__.connection
+
+        request_add_pref(conn)
+
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute('''SELECT Passaros_idPassaros FROM Usuarios_Passaros WHERE Usuarios_idUsuarios = 1''')
+                self.assertEqual(cursor.fetchone()[0],1)
+                cursor.execute('''COMMIT''') 
+
+            except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel')
 
     def test_request_views(self):
-        pass
+        conn = self.__class__.connection
+
+        request_add_view(conn)
+
+        with conn.cursor() as cursor:
+            try:
+                cursor.execute('''SELECT IP, Browser , Aparelho , Data FROM Visualizado WHERE Usuarios_idUsuarios = 1''')
+                self.assertEqual(cursor.fetchone(),("1270018000","google explorer","nokia bolado",datetime.datetime(2014, 11, 19, 13, 29)))
+                cursor.execute('''COMMIT''') 
+
+            except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel')
 
     def test_request_upvote(self):
         pass
-        
+
     def test_request_z_remove_upvote(self):
         pass
 
