@@ -157,3 +157,20 @@ def request_delete_post(conn):
         except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel')
 
+def request_add_pref(conn):
+
+    with conn.cursor() as cursor:
+        try:
+            req = requests.put("http://127.0.0.1:8000/add/pref?usr_id=1&bird_id=1")
+
+        except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel')
+
+def request_add_view(conn):
+
+    with conn.cursor() as cursor:
+        try:
+            req = requests.put("http://127.0.0.1:8000/add/view?post_id=1&usr_id=1&browser=google%20explorer&ip=1270018000&device=nokia%20bolado&date=2014-11-19%2013%3A29%3A00.000%20")
+
+        except pymysql.err.IntegrityError as e:
+                raise ValueError(f'Não foi possivel')
