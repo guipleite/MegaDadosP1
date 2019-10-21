@@ -190,7 +190,7 @@ def request_add_vote(conn):
 def request_update_vote(conn):
      with conn.cursor() as cursor:
         try:
-            req = requests.put("http://127.0.0.1:8000/post/updatevote?usr_id=1&post_id=1&vote=1")
+            req = requests.put("http://127.0.0.1:8000/post/updatevote?usr_id=1&post_id=1&vote=0")
 
         except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel')

@@ -185,7 +185,9 @@ ENGINE = InnoDB;
 
 DROP TRIGGER IF EXISTS ativar;
 DROP TRIGGER IF EXISTS joia;
-drop view if exists curtida;
+DROP TRIGGER IF EXISTS joia1;
+
+drop view if exists Curtida;
 CREATE VIEW Curtida AS SELECT Joinha.Post_idPost as idcurt, SUM(Joinha.Joi) AS somacurtida FROM Joinha group by Joinha.Post_idPost;
 
 DELIMITER // 
@@ -204,6 +206,16 @@ DELIMITER ;
 DELIMITER // 
 CREATE TRIGGER joia
 AFTER INSERT ON Joinha
+FOR EACH ROW
+BEGIN
+    UPDATE Curtida, Post
+		SET Post.Curtidas = Curtida.somacurtida where Post.idPost = Curtida.idcurt;
+END//
+DELIMITER ;
+
+DELIMITER // 
+CREATE TRIGGER joia1
+AFTER UPDATE ON Joinha
 FOR EACH ROW
 BEGIN
     UPDATE Curtida, Post

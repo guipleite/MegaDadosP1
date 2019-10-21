@@ -137,7 +137,7 @@ class TestProjeto(unittest.TestCase):
         with conn.cursor() as cursor:
             try:
                 cursor.execute('''SELECT Curtidas FROM post WHERE idPost=1;''')
-                self.assertEqual(cursor.fetchone(),1)
+                self.assertEqual(cursor.fetchone()[0],1)
 
             except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel') 
@@ -150,7 +150,7 @@ class TestProjeto(unittest.TestCase):
         with conn.cursor() as cursor:
             try:
                 cursor.execute('''SELECT Curtidas FROM post WHERE idPost=1;''')
-                self.assertEqual(cursor.fetchone(),0)
+                self.assertEqual(cursor.fetchone()[0],0)
 
             except pymysql.err.IntegrityError as e:
                 raise ValueError(f'Não foi possivel') 
@@ -217,7 +217,7 @@ def run_sql_script(filename):
         )
 
 def setUpModule():
-    run_sql_script('P1script.sql')
+    #run_sql_script('P1script.sql')
     run_sql_script('P1script_Delta.sql')
 
 def tearDownModule():
