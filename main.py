@@ -111,14 +111,13 @@ def adiciona_pref(usr_id,bird_id):
 
     conn.close()
 
-@app.delete("/remove/post")
+@app.put("/remove/post")
 def remove_post(post_id):
 
     conn = setUp()
 
     with conn.cursor() as cursor:
         try:
-            cursor.execute('''UPDATE Post SET Atividade=0 WHERE idPost=%s;''',(post_id))
             cursor.execute('''UPDATE Post SET Atividade=0 WHERE idPost=%s;''',(post_id))
             cursor.execute('''COMMIT''')
 
